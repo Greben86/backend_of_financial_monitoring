@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import workshop.financial.monitoring.backend.model.TransactionRecord;
+import workshop.financial.monitoring.backend.model.Transaction;
 import workshop.financial.monitoring.backend.service.TransactionService;
 
 @RequiredArgsConstructor
@@ -19,12 +19,12 @@ public class TransactionRestController {
     private final TransactionService transactionService;
 
     @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TransactionRecord addTransaction(@RequestBody TransactionRecord transaction) {
+    public Transaction addTransaction(@RequestBody Transaction transaction) {
         return transaction;
     }
 
     @PutMapping(value = "/{id}/edit", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TransactionRecord editTransaction(@PathVariable("id") Long id, @RequestBody TransactionRecord transaction) {
+    public Transaction editTransaction(@PathVariable("id") Long id, @RequestBody Transaction transaction) {
         return transaction;
     }
 }

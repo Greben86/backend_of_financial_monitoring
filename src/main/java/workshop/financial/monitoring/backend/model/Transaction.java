@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
-public class UserAccount {
+@Entity(name = "transactions")
+public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @EqualsAndHashCode.Include
     private Long id;
-    private String login;
+    private String name;
 }
