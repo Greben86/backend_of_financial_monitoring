@@ -28,6 +28,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserService userService;
 
@@ -45,8 +46,10 @@ public class SecurityConfiguration {
                 }))
                 // Настройка доступа к конечным точкам
                 .authorizeHttpRequests(request -> request
-                        // Можно указать конкретный путь, * - 1 уровень вложенности, ** - любое количество уровней вложенности
-                        .requestMatchers("/auth/**").permitAll()
+                        // Можно указать конкретный путь,
+                        // * - 1 уровень вложенности,
+                        // ** - любое количество уровней вложенности
+                        .requestMatchers("/auth/sign/*").permitAll()
                         .requestMatchers("/h2/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
@@ -55,6 +58,7 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable());
+
         return http.build();
     }
 

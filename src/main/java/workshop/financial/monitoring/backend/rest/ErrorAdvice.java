@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Контроллер для перехвата исключений доступа к методам {@link MethodArgumentNotValidException}
+ * Контроллер для перехвата исключений {@link MethodArgumentNotValidException}
  */
 @ControllerAdvice
-public class NoValidAdvice {
+public class ErrorAdvice {
 
     /**
-     * Если поймали исключение {@link MethodArgumentNotValidException}, то возвращаем статус 401
+     * Если поймали исключение {@link MethodArgumentNotValidException}, то возвращаем статус 400
      *
-     * @return ответ со статусом 401
+     * @return ответ со статусом 400
      */
-    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleException(MethodArgumentNotValidException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.TEXT_PLAIN)
