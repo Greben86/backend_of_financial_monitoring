@@ -6,38 +6,57 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import workshop.financial.monitoring.backend.model.User;
-import workshop.financial.monitoring.backend.repository.UserJPARepository;
+import workshop.financial.monitoring.backend.domain.dto.UserRequest;
+import workshop.financial.monitoring.backend.domain.model.User;
+import workshop.financial.monitoring.backend.repository.UserRepository;
 
+/**
+ * Сервис управления пользователями
+ */
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class UserService {
 
-    private final UserJPARepository repository;
-
-    /**
-     * Сохранение пользователя
-     *
-     * @return сохраненный пользователь
-     */
-    public User save(User user) {
-        return repository.save(user);
-    }
-
+    private final UserRepository repository;
 
     /**
      * Создание пользователя
      *
      * @return созданный пользователь
      */
-    public User create(User user) {
+    public User addUser(final User user) {
         if (repository.existsByUsername(user.getUsername())) {
-            // Заменить на свои исключения
+            // TODO Заменить на свои исключения
             throw new RuntimeException("Пользователь с таким именем уже существует");
         }
 
-        return save(user);
+        return repository.save(user);
+    }
+
+    /**
+     * Обновление пользователя
+     *
+     * @return пользователь
+     */
+    public void updateUser(final User user) {
+        repository.save(user);
+    }
+
+    /**
+     * Обновление пользователя
+     *
+     * @return пользователь
+     */
+    public void updateUser(final UserRequest request) {
+        final var user = getCurrentUser();
+        if (!repository.existsByUsername(request.username())) {
+            // TODO Заменить на свои исключения
+            throw new RuntimeException("Пользователь с таким именем уже существует");
+        }
+
+        user.setUsername(request.username());
+        repository.save(user);
     }
 
     /**
@@ -45,7 +64,7 @@ public class UserService {
      *
      * @return пользователь
      */
-    public User getByUsername(String username) {
+    public User getByUsername(final String username) {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
@@ -76,5 +95,4 @@ public class UserService {
 
         return getByUsername(username);
     }
-
 }

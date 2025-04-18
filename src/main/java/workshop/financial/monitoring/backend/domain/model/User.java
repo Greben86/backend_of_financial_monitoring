@@ -1,4 +1,4 @@
-package workshop.financial.monitoring.backend.model;
+package workshop.financial.monitoring.backend.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity(name = "users")
-@Schema(description = "Пользователь")
+@Schema(description = "Пользователь: сущность базы данных")
 public class User implements UserDetails {
 
     @Id
@@ -30,8 +30,10 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     @Schema(description = "Первичный ключ", example = "1")
     private Long id;
-    @Schema(description = "Имя пользователя", example = "Jon")
+
+    @Schema(description = "Имя пользователя", example = "Вася")
     private String username;
+
     @Schema(description = "Пароль", example = "my_1secret1_password")
     private String password;
 
