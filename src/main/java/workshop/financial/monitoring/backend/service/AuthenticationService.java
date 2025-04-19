@@ -10,6 +10,7 @@ import workshop.financial.monitoring.backend.domain.dto.JwtAuthenticationRespons
 import workshop.financial.monitoring.backend.domain.dto.SignInRequest;
 import workshop.financial.monitoring.backend.domain.dto.SignUpRequest;
 import workshop.financial.monitoring.backend.domain.model.User;
+import workshop.financial.monitoring.backend.exception.LogicException;
 
 /**
  * Сервис аутентификации
@@ -71,8 +72,7 @@ public class AuthenticationService {
         final var user = userService.getCurrentUser();
         final var newPassword = passwordEncoder.encode(request.password());
         if (newPassword.equals(user.getPassword())) {
-            // TODO Заменить на свои исключения
-            throw new RuntimeException("Новый пароль совпадает со старым");
+            throw new LogicException("Новый пароль совпадает со старым");
         }
 
         user.setPassword(newPassword);

@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -19,7 +21,10 @@ import java.util.Date;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity(name = "transactions")
 @Schema(description = "Транзакция: сущность базы данных")
-public class Transaction {
+public class Transaction implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -3163479472859140497L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

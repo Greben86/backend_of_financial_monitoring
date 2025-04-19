@@ -8,6 +8,9 @@ import workshop.financial.monitoring.backend.domain.model.User;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Репозиторий категорий
+ */
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByUser(User user);

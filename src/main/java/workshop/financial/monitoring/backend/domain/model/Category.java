@@ -10,12 +10,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity(name = "categories")
 @Schema(description = "Категория: сущность базы данных")
-public class Category {
+public class Category implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -4134450322452833475L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -6,6 +6,9 @@ import workshop.financial.monitoring.backend.domain.model.User;
 
 import java.util.Optional;
 
+/**
+ * Репозиторий пользователей
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);

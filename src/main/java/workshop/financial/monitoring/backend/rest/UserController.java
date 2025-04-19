@@ -2,6 +2,7 @@ package workshop.financial.monitoring.backend.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import workshop.financial.monitoring.backend.domain.dto.UserRequest;
 import workshop.financial.monitoring.backend.service.UserService;
 
-@RequiredArgsConstructor(onConstructor_=@Autowired)
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("user")
 @Tag(name = "REST API: Пользователь")
@@ -25,7 +26,7 @@ public class UserController {
     @PutMapping(value = "/edit",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> editUser(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<Void> editUser(@RequestBody @Valid UserRequest userRequest) {
         userService.updateUser(userRequest);
         return ResponseEntity.ok().build();
     }

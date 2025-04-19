@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import workshop.financial.monitoring.backend.domain.dto.TransactionRequest;
 import workshop.financial.monitoring.backend.domain.dto.TransactionResponse;
+import workshop.financial.monitoring.backend.domain.dto.TransactionStatusRequest;
 import workshop.financial.monitoring.backend.service.TransactionService;
 
 import java.util.List;
@@ -32,33 +32,31 @@ public class TransactionController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public TransactionResponse addTransaction(@RequestBody @Valid TransactionRequest transaction) {
-        return new TransactionResponse(
-                0L,
-                transaction.customerType(),
-                transaction.transactionTime(),
-                transaction.transactionType(),
-                transaction.description(),
-                transaction.sumValue(),
-                transaction.status(),
-                transaction.senderBank(),
-                transaction.account(),
-                transaction.recipientBank(),
-                transaction.inn(),
-                transaction.category(),
-                transaction.phone()
-        );
+        return transactionService.addTransaction(transaction);
     }
 
-//    @Operation(summary = "Редактирование транзакции")
-//    @PutMapping(value = "/{id}/edit", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public Transaction editTransaction(@PathVariable("id") Long id, @RequestBody Transaction transaction) {
-//        return transaction;
-//    }
+    @Operation(summary = "Редактирование транзакции")
+    @PutMapping(value = "/{id}/edit",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public TransactionResponse editTransaction(@PathVariable("id") Long id,
+                                               @RequestBody @Valid TransactionRequest transaction) {
+        return transactionService.editTransaction(id, transaction);
+    }
+
+    @Operation(summary = "Изменение статуса транзакции")
+    @PutMapping(value = "/{id}/status",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public TransactionResponse editTransaction(@PathVariable("id") Long id,
+                                               @RequestBody @Valid TransactionStatusRequest status) {
+        return transactionService.changeStatus(id, status);
+    }
 
     @Operation(summary = "Все транзакции")
     @GetMapping(value = "/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TransactionResponse> allTransactions() {
-        return List.of();
+        return transactionService.allTransactions();
     }
 }

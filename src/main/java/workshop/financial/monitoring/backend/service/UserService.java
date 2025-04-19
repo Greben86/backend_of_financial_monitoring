@@ -3,11 +3,11 @@ package workshop.financial.monitoring.backend.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import workshop.financial.monitoring.backend.domain.dto.UserRequest;
 import workshop.financial.monitoring.backend.domain.model.User;
+import workshop.financial.monitoring.backend.exception.LogicException;
 import workshop.financial.monitoring.backend.repository.UserRepository;
 
 /**
@@ -27,8 +27,7 @@ public class UserService {
      */
     public User addUser(final User user) {
         if (repository.existsByUsername(user.getUsername())) {
-            // TODO Заменить на свои исключения
-            throw new RuntimeException("Пользователь с таким именем уже существует");
+            throw new LogicException("Пользователь с таким именем уже существует");
         }
 
         return repository.save(user);
@@ -50,9 +49,8 @@ public class UserService {
      */
     public void updateUser(final UserRequest request) {
         final var user = getCurrentUser();
-        if (!repository.existsByUsername(request.username())) {
-            // TODO Заменить на свои исключения
-            throw new RuntimeException("Пользователь с таким именем уже существует");
+        if (repository.existsByUsername(request.username())) {
+            throw new LogicException("Пользователь с таким именем уже существует");
         }
 
         user.setUsername(request.username());
@@ -66,7 +64,7 @@ public class UserService {
      */
     public User getByUsername(final String username) {
         return repository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new LogicException("Пользователь не найден"));
 
     }
 
