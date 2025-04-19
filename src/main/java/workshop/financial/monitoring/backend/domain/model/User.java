@@ -1,6 +1,7 @@
 package workshop.financial.monitoring.backend.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,6 +27,9 @@ import java.util.List;
 @Schema(description = "Пользователь: сущность базы данных")
 public class User implements UserDetails {
 
+    @Serial
+    private static final long serialVersionUID = -7625191361140919924L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @EqualsAndHashCode.Include
@@ -32,6 +37,7 @@ public class User implements UserDetails {
     private Long id;
 
     @Schema(description = "Имя пользователя", example = "Вася")
+    @Column(length = 50)
     private String username;
 
     @Schema(description = "Пароль", example = "my_1secret1_password")

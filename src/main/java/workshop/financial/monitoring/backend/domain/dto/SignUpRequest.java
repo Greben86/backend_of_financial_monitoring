@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 @Schema(description = "Запрос на регистрацию")
 public record SignUpRequest(
         @Schema(description = "Имя пользователя", example = "Вася")
-        @Size(min = 5, max = 50, message = "Имя пользователя должно содержать от 5 до 50 символов")
+        @Size(min = 1, max = 50, message = "Имя пользователя должно содержать от 1 до 50 символов")
         @NotBlank(message = "Имя пользователя не может быть пустыми")
         String username,
         @Schema(description = "Пароль", example = "my_1secret1_password")
