@@ -24,7 +24,7 @@ public class Category implements Serializable {
     private static final long serialVersionUID = -4134450322452833475L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     @Schema(description = "Первичный ключ", example = "1")
     private Long id;

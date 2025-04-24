@@ -18,7 +18,7 @@ public record TransactionRequest(
         @NotNull(message = "Тип лица не может быть пустым и должен иметь допустимое название")
         CustomerType customerType,
 
-        @Schema(description = "Дата и время операции")
+        @Schema(description = "Дата и время операции", pattern = "dd-MM-yyyy HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
         @NotNull(message = "Дата и время операции не может быть пустым")
         Date transactionTime,

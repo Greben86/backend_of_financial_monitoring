@@ -1,0 +1,92 @@
+version: "3.8"
+services:
+  backendservice:
+    container_name: backend-financial-monitoring
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/hakaton_db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backendservice:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - financial-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17.0-alpine3.20
+    environment:
+      POSTGRES_DB: "hakaton_db"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - hakaton_db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d hakaton_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - financial-network
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4:9.2
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@mail.me"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/misc/ping || exit -1" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - financial-network
+    depends_on:
+      - postgres
+
+volumes:
+  hakaton_db-data:
+  pgadmin-data:
+
+networks:
+  financial-network:
+    driver: bridge

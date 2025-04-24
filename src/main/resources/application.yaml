@@ -5,28 +5,25 @@ spring:
   application:
     name: backend_of_financial_monitoring
   datasource:
-    url: jdbc:h2:mem:sampledb
-    driverClassName: org.h2.Driver
-    username: admin
-    password: admin
+    url: "${DB_URL:jdbc:postgresql://localhost:5432/hakaton_db}"
+    username: "${DB_USERNAME:admin}"
+    password: "${DB_PASSWORD:admin}"
+    driverClassName: org.postgresql.Driver
   jpa:
     show-sql: true
-    ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-  h2:
-    console:
-      enabled: true
-      path: /h2
-      settings:
-        web-allow-others: true
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: "classpath:db/changelog/init_database.sql"
 
 management:
   endpoints:
     web:
       exposure:
         include: health
+  endpoint:
+    health:
+      show-details: never
 
 security:
   token:

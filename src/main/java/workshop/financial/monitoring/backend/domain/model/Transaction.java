@@ -27,7 +27,7 @@ public class Transaction implements Serializable {
     private static final long serialVersionUID = -3163479472859140497L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     @Schema(description = "Первичный ключ", example = "1")
     private Long id;

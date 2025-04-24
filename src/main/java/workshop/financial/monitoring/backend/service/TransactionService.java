@@ -14,6 +14,7 @@ import workshop.financial.monitoring.backend.repository.CategoryRepository;
 import workshop.financial.monitoring.backend.repository.TransactionRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**

@@ -50,8 +50,7 @@ public class SecurityConfiguration {
                         // * - 1 уровень вложенности,
                         // ** - любое количество уровней вложенности
                         .requestMatchers("/auth/sign/*").permitAll()
-                        .requestMatchers("/h2/**").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
