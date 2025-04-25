@@ -1,4 +1,4 @@
-package workshop.financial.monitoring.backend;
+package workshop.financial.monitoring.backend.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -51,6 +51,7 @@ public class SecurityConfiguration {
                         // ** - любое количество уровней вложенности
                         .requestMatchers("/auth/sign/*").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
+//                        .requestMatchers("/transaction/export").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
@@ -68,7 +69,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        var authProvider = new DaoAuthenticationProvider();
+        final var authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userService.userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;

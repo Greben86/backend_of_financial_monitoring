@@ -1,6 +1,5 @@
 package workshop.financial.monitoring.backend.domain.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +23,6 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity(name = "users")
-@Schema(description = "Пользователь: сущность базы данных")
 public class User implements UserDetails {
 
     @Serial
@@ -33,14 +31,11 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    @Schema(description = "Первичный ключ", example = "1")
     private Long id;
 
-    @Schema(description = "Имя пользователя", example = "Вася")
     @Column(length = 50)
     private String username;
 
-    @Schema(description = "Пароль", example = "my_1secret1_password")
     private String password;
 
     @Override

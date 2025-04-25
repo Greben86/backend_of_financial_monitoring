@@ -2,6 +2,7 @@ package workshop.financial.monitoring.backend.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import workshop.financial.monitoring.backend.domain.dto.TransactionRequest;
 import workshop.financial.monitoring.backend.domain.dto.TransactionResponse;
 import workshop.financial.monitoring.backend.domain.dto.TransactionStatusRequest;
+import workshop.financial.monitoring.backend.service.ExportExcelService;
 import workshop.financial.monitoring.backend.service.TransactionService;
 
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final ExportExcelService exportExcelService;
 
     @Operation(summary = "Добавление транзакции")
     @ResponseStatus(HttpStatus.CREATED)
@@ -53,8 +56,8 @@ public class TransactionController {
     @PutMapping(value = "/{id}/status",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TransactionResponse editTransaction(@PathVariable("id") Long id,
-                                               @RequestBody @Valid TransactionStatusRequest status) {
+    public TransactionResponse statusTransaction(@PathVariable("id") Long id,
+                                                 @RequestBody @Valid TransactionStatusRequest status) {
         return transactionService.changeStatus(id, status);
     }
 
@@ -62,7 +65,14 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TransactionResponse> allTransactions() {
+    public List<TransactionResponse> searchTransactions() {
         return transactionService.allTransactions();
+    }
+
+    @Operation(summary = "Экспорт транзакций пользователя в Excel")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/export")
+    public void export(HttpServletResponse response) {
+        exportExcelService.export(response);
     }
 }

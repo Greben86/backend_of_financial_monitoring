@@ -55,6 +55,10 @@ public record TransactionRequest(
         @NotBlank(message = "ИНН получателя не может быть пустым")
         String inn,
 
+        @Schema(description = "Расчетный счет получателя")
+        @NotBlank(message = "Расчетный сче получателя не может быть пустым")
+        String recipientAccount,
+
         @Schema(description = "Идентификатор категории")
         @NotNull(message = "Идентификатор категории не может быть пустым")
         Long categoryId,

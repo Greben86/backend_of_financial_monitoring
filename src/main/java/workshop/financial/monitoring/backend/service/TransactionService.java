@@ -14,7 +14,6 @@ import workshop.financial.monitoring.backend.repository.CategoryRepository;
 import workshop.financial.monitoring.backend.repository.TransactionRepository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -36,14 +35,14 @@ public class TransactionService {
      * @return новая транзакция
      */
     public TransactionResponse addTransaction(final TransactionRequest request) {
-        var user = userService.getCurrentUser();
-        var category = categoryRepository.findByIdAndUser(request.categoryId(), user);
+        final var user = userService.getCurrentUser();
+        final var category = categoryRepository.findByIdAndUser(request.categoryId(), user);
         if (category.isEmpty()) {
             throw new LogicException(String.format("Категория пользователя \"%s\" c идентификатором \"%d\" не найдена",
                     user.getUsername(), request.categoryId()));
         }
 
-        var transaction = new Transaction();
+        final var transaction = new Transaction();
         transaction.setUser(user);
         transaction.setCustomerType(request.customerType());
         transaction.setTransactionTime(request.transactionTime());
@@ -71,14 +70,14 @@ public class TransactionService {
      * @return транзакция
      */
     public TransactionResponse editTransaction(final Long id, final TransactionRequest request) {
-        var user = userService.getCurrentUser();
-        var category = categoryRepository.findByIdAndUser(request.categoryId(), user);
+        final var user = userService.getCurrentUser();
+        final var category = categoryRepository.findByIdAndUser(request.categoryId(), user);
         if (category.isEmpty()) {
             throw new LogicException(String.format("Категория пользователя \"%s\" c идентификатором \"%d\" не найдена",
                     user.getUsername(), request.categoryId()));
         }
 
-        var transaction = repository.findByIdAndUser(id, user)
+        final var transaction = repository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new LogicException(
                         String.format("Транзакция по идентификатору \"%d\" не найдена", id)));
 
@@ -98,6 +97,7 @@ public class TransactionService {
         transaction.setAccount(request.account());
         transaction.setRecipientBank(request.recipientBank());
         transaction.setInn(request.inn());
+        transaction.setRecipientAccount(request.recipientAccount());
         transaction.setCategory(category.get());
         transaction.setPhone(request.phone());
 
@@ -112,7 +112,7 @@ public class TransactionService {
      * @return список транзакций
      */
     public List<TransactionResponse> allTransactions() {
-        var user = userService.getCurrentUser();
+        final var user = userService.getCurrentUser();
         return repository.findByUser(user).stream()
                 .map(this::convertToResponse)
                 .toList();
@@ -126,10 +126,15 @@ public class TransactionService {
      * @return
      */
     public TransactionResponse changeStatus(final Long id, final TransactionStatusRequest statusRequest) {
-        var user = userService.getCurrentUser();
-        var transaction = repository.findByIdAndUser(id, user)
+        final var user = userService.getCurrentUser();
+        final var transaction = repository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new LogicException(
                         String.format("Транзакция по идентификатору \"%d\" не найдена", id)));
+
+        if (Status.DELETED.equals(transaction.getStatus())) {
+            throw new LogicException(String.format("Нельзя редактировать транзакцию в статусе \"%s\"",
+                    Status.DELETED.getName()));
+        }
 
         if (Objects.equals(transaction.getStatus(), statusRequest.status())) {
             throw new LogicException("Новый статус совпадает со старым");
@@ -154,6 +159,7 @@ public class TransactionService {
                 transaction.getAccount(),
                 transaction.getRecipientBank(),
                 transaction.getInn(),
+                transaction.getRecipientAccount(),
                 new CategoryResponse(transaction.getCategory().getId(),
                         transaction.getCategory().getName()),
                 transaction.getPhone()
