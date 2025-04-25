@@ -13,8 +13,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: validate
-  liquibase:
-    change-log: "classpath:db/changelog/init_database.sql"
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
 
 management:
   endpoints:
