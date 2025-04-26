@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ import workshop.financial.monitoring.backend.service.AuthenticationService;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "REST API: Аутентификация")
+@Validated
 public class AuthController {
 
     private final AuthenticationService authenticationService;

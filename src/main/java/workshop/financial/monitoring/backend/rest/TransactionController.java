@@ -7,29 +7,34 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import workshop.financial.monitoring.backend.domain.dto.FilterDTO;
 import workshop.financial.monitoring.backend.domain.dto.TransactionRequest;
 import workshop.financial.monitoring.backend.domain.dto.TransactionResponse;
 import workshop.financial.monitoring.backend.domain.dto.TransactionStatusRequest;
-import workshop.financial.monitoring.backend.service.ExportExcelService;
+import workshop.financial.monitoring.backend.service.export.ExportExcelService;
 import workshop.financial.monitoring.backend.service.TransactionService;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("transaction")
 @Tag(name = "REST API: Транзакции")
+@Validated
 public class TransactionController {
 
     private final TransactionService transactionService;
@@ -40,7 +45,7 @@ public class TransactionController {
     @PostMapping(value = "/add",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TransactionResponse addTransaction(@RequestBody @Valid TransactionRequest transaction) {
+    public @ResponseBody TransactionResponse addTransaction(@RequestBody @Valid TransactionRequest transaction) {
         return transactionService.addTransaction(transaction);
     }
 
@@ -49,8 +54,9 @@ public class TransactionController {
     @PutMapping(value = "/{id}/edit",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TransactionResponse editTransaction(@PathVariable("id") Long id,
-                                               @RequestBody @Valid TransactionRequest transaction) {
+    public @ResponseBody TransactionResponse editTransaction(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid TransactionRequest transaction) {
         return transactionService.editTransaction(id, transaction);
     }
 
@@ -59,25 +65,33 @@ public class TransactionController {
     @PutMapping(value = "/{id}/status",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TransactionResponse statusTransaction(@PathVariable("id") Long id,
-                                                 @RequestBody @Valid TransactionStatusRequest status) {
+    public @ResponseBody TransactionResponse statusTransaction(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid TransactionStatusRequest status) {
         return transactionService.changeStatus(id, status);
+    }
+
+    @Operation(summary = "Удаление транзакции")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = "/{id}/delete")
+    public ResponseEntity<Void> deleteTransaction(@PathVariable("id") Long id) {
+        transactionService.deleteTransactions(id);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Все транзакции")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TransactionResponse> searchTransactions(
-            @RequestParam(required = false) Map<String, String> queryParams) {
-        return transactionService.searchTransactions(queryParams);
+    public @ResponseBody List<TransactionResponse> searchTransactions(@ModelAttribute FilterDTO properties) {
+        return transactionService.searchTransactions(properties);
     }
 
     @Operation(summary = "Экспорт транзакций пользователя в Excel")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/export")
     @CrossOrigin
-    public void export(HttpServletResponse response) {
-        exportExcelService.export(response);
+    public void export(@ModelAttribute FilterDTO properties, HttpServletResponse response) {
+        exportExcelService.export(transactionService.searchTransactions(properties), response);
     }
 }

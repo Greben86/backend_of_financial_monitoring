@@ -2,7 +2,6 @@ package workshop.financial.monitoring.backend.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import workshop.financial.monitoring.backend.domain.model.CustomerType;
 import workshop.financial.monitoring.backend.domain.model.Status;
 import workshop.financial.monitoring.backend.domain.model.TransactionType;
@@ -19,7 +18,7 @@ public record TransactionResponse(
         CustomerType customerType,
 
         @Schema(description = "Дата и время операции", pattern = "dd-MM-yyyy HH:mm:ss")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="Europe/Moscow")
         Date transactionTime,
 
         @Schema(description = "Тип транзакции", example = "Поступление")

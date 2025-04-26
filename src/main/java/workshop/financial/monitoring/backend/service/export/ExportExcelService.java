@@ -1,18 +1,23 @@
-package workshop.financial.monitoring.backend.service;
+package workshop.financial.monitoring.backend.service.export;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import workshop.financial.monitoring.backend.domain.dto.TransactionResponse;
 import workshop.financial.monitoring.backend.exception.LogicException;
-import workshop.financial.monitoring.backend.repository.TransactionRepository;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
+/**
+ * Компонент экспорта в excel
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -22,9 +27,13 @@ public class ExportExcelService {
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
     private final DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 
-    private final TransactionRepository repository;
-
-    public void export(final HttpServletResponse response) {
+    /**
+     * Метод формирует документ excel и записывает его в {@link ServletOutputStream}
+     *
+     * @param transactions список транзакций
+     * @param response объект {@link HttpServletResponse} из контроллера
+     */
+    public void export(final List<TransactionResponse> transactions, final HttpServletResponse response) {
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-Disposition", "attachment; filename=export.xlsx");
 
@@ -51,21 +60,21 @@ public class ExportExcelService {
 
             // Populate data rows
             int rowNum = 1;
-            for (final var transaction : repository.findAll()) {
+            for (final var transaction : transactions) {
                 final var row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(transaction.getCustomerType().getName());
-                row.createCell(1).setCellValue(formatter.format(transaction.getTransactionTime()));
-                row.createCell(2).setCellValue(transaction.getTransactionType().getName());
-                row.createCell(3).setCellValue(transaction.getDescription());
-                row.createCell(4).setCellValue(transaction.getSumValue().toString());
-                row.createCell(5).setCellValue(transaction.getStatus().getName());
-                row.createCell(6).setCellValue(transaction.getSenderBank());
-                row.createCell(7).setCellValue(transaction.getAccount());
-                row.createCell(8).setCellValue(transaction.getRecipientBank());
-                row.createCell(9).setCellValue(transaction.getInn());
-                row.createCell(10).setCellValue(transaction.getRecipientAccount());
-                row.createCell(11).setCellValue(transaction.getCategory().getName());
-                row.createCell(12).setCellValue(transaction.getPhone());
+                row.createCell(0).setCellValue(transaction.customerType().getName());
+                row.createCell(1).setCellValue(formatter.format(transaction.transactionTime()));
+                row.createCell(2).setCellValue(transaction.transactionType().getName());
+                row.createCell(3).setCellValue(transaction.description());
+                row.createCell(4).setCellValue(transaction.sumValue().toString());
+                row.createCell(5).setCellValue(transaction.status().getName());
+                row.createCell(6).setCellValue(transaction.senderBank());
+                row.createCell(7).setCellValue(transaction.account());
+                row.createCell(8).setCellValue(transaction.recipientBank());
+                row.createCell(9).setCellValue(transaction.inn());
+                row.createCell(10).setCellValue(transaction.recipientAccount());
+                row.createCell(11).setCellValue(transaction.category().name());
+                row.createCell(12).setCellValue(transaction.phone());
             }
 
             // Write to response stream

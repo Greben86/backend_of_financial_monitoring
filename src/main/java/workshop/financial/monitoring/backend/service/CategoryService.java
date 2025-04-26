@@ -63,6 +63,34 @@ public class CategoryService {
     }
 
     /**
+     * Поиск категории пользователя по названию
+     *
+     * @param id идентификатор категории
+     * @return категория
+     */
+    public Category findCategory(Long id) {
+        var user = userService.getCurrentUser();
+        return repository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new LogicException(String.format(
+                        "Категория пользователя \"%s\" c идентификатором \"%d\" не найдена",
+                        user.getUsername(), id)));
+    }
+
+    /**
+     * Поиск категории пользователя по названию
+     *
+     * @param name название категории
+     * @return категория
+     */
+    public Category findCategory(String name) {
+        var user = userService.getCurrentUser();
+        return repository.findByNameAndUser(name, user)
+                .orElseThrow(() -> new LogicException(String.format(
+                        "Категория пользователя \"%s\" c названием \"%s\" не найдена",
+                        user.getUsername(), name)));
+    }
+
+    /**
      * Выборка всех категорий пользователя
      *
      * @return список категорий
