@@ -55,7 +55,7 @@ public class CategoryService {
         }
 
         var category = repository.findByIdAndUser(id, user)
-                .orElseThrow(IllegalStateException::new);
+                .orElseThrow(() -> new LogicException("Категория с таким идентификатором не найдена"));
         category.setName(request.name());
         repository.save(category);
 

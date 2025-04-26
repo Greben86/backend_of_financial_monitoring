@@ -1,6 +1,7 @@
 package workshop.financial.monitoring.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import workshop.financial.monitoring.backend.domain.dto.CategoryResponse;
@@ -9,11 +10,13 @@ import workshop.financial.monitoring.backend.domain.dto.TransactionResponse;
 import workshop.financial.monitoring.backend.domain.dto.TransactionStatusRequest;
 import workshop.financial.monitoring.backend.domain.model.Status;
 import workshop.financial.monitoring.backend.domain.model.Transaction;
+import workshop.financial.monitoring.backend.domain.model.TransactionType;
 import workshop.financial.monitoring.backend.exception.LogicException;
 import workshop.financial.monitoring.backend.repository.CategoryRepository;
 import workshop.financial.monitoring.backend.repository.TransactionRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -107,13 +110,48 @@ public class TransactionService {
     }
 
     /**
-     * Выборка всех транзакций пользователя
+     * Выборка всех транзакций пользователя по запросу
      *
      * @return список транзакций
      */
-    public List<TransactionResponse> allTransactions() {
+    public List<TransactionResponse> searchTransactions(final Map<String, String> queryParams) {
         final var user = userService.getCurrentUser();
-        return repository.findByUser(user).stream()
+        var specification = Specification.<Transaction>where((root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user"), user));
+
+        if (queryParams.containsKey("senderBank")) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("senderBank"), queryParams.get("senderBank")));
+        }
+
+        if (queryParams.containsKey("recipientBank")) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("recipientBank"), queryParams.get("recipientBank")));
+        }
+
+        if (queryParams.containsKey("status")) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("status"), Status.forValue(queryParams.get("status"))));
+        }
+
+        if (queryParams.containsKey("inn")) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("inn"), queryParams.get("inn")));
+        }
+
+        if (queryParams.containsKey("transactionType")) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("transactionType"), TransactionType.forValue(queryParams.get("transactionType"))));
+        }
+
+        if (queryParams.containsKey("categoryName")) {
+            final var category = categoryRepository.findByNameAndUser(queryParams.get("categoryName"), user)
+                    .orElseThrow(() -> new LogicException("Категория с таким названием не найдена"));
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("category"), category));
+        }
+
+        return repository.findAll(specification).stream()
                 .map(this::convertToResponse)
                 .toList();
     }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import workshop.financial.monitoring.backend.exception.LogicException;
 import workshop.financial.monitoring.backend.repository.TransactionRepository;
 
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class ExportExcelService {
 

@@ -7,12 +7,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import workshop.financial.monitoring.backend.domain.dto.TransactionRequest;
@@ -22,6 +24,7 @@ import workshop.financial.monitoring.backend.service.ExportExcelService;
 import workshop.financial.monitoring.backend.service.TransactionService;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -65,13 +68,15 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TransactionResponse> searchTransactions() {
-        return transactionService.allTransactions();
+    public List<TransactionResponse> searchTransactions(
+            @RequestParam(required = false) Map<String, String> queryParams) {
+        return transactionService.searchTransactions(queryParams);
     }
 
     @Operation(summary = "Экспорт транзакций пользователя в Excel")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/export")
+    @CrossOrigin
     public void export(HttpServletResponse response) {
         exportExcelService.export(response);
     }
