@@ -18,8 +18,8 @@ public record TransactionRequest(
         @NotNull(message = "Тип лица не может быть пустым и должен иметь допустимое название")
         CustomerType customerType,
 
-        @Schema(description = "Дата и время операции")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+        @Schema(description = "Дата и время операции", pattern = "dd-MM-yyyy HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="Europe/Moscow")
         @NotNull(message = "Дата и время операции не может быть пустым")
         Date transactionTime,
 
@@ -54,6 +54,10 @@ public record TransactionRequest(
         @Pattern(regexp = "\\d{10}", message = "ИНН должен содержать 10 символов")
         @NotBlank(message = "ИНН получателя не может быть пустым")
         String inn,
+
+        @Schema(description = "Расчетный счет получателя")
+        @NotBlank(message = "Расчетный сче получателя не может быть пустым")
+        String recipientAccount,
 
         @Schema(description = "Идентификатор категории")
         @NotNull(message = "Идентификатор категории не может быть пустым")

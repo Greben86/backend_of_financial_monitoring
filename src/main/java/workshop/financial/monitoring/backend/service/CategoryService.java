@@ -55,11 +55,39 @@ public class CategoryService {
         }
 
         var category = repository.findByIdAndUser(id, user)
-                .orElseThrow(IllegalStateException::new);
+                .orElseThrow(() -> new LogicException("Категория с таким идентификатором не найдена"));
         category.setName(request.name());
         repository.save(category);
 
         return convertToResponse(category);
+    }
+
+    /**
+     * Поиск категории пользователя по названию
+     *
+     * @param id идентификатор категории
+     * @return категория
+     */
+    public Category findCategory(Long id) {
+        var user = userService.getCurrentUser();
+        return repository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new LogicException(String.format(
+                        "Категория пользователя \"%s\" c идентификатором \"%d\" не найдена",
+                        user.getUsername(), id)));
+    }
+
+    /**
+     * Поиск категории пользователя по названию
+     *
+     * @param name название категории
+     * @return категория
+     */
+    public Category findCategory(String name) {
+        var user = userService.getCurrentUser();
+        return repository.findByNameAndUser(name, user)
+                .orElseThrow(() -> new LogicException(String.format(
+                        "Категория пользователя \"%s\" c названием \"%s\" не найдена",
+                        user.getUsername(), name)));
     }
 
     /**

@@ -1,4 +1,4 @@
-package workshop.financial.monitoring.backend;
+package workshop.financial.monitoring.backend.configuration;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,28 +32,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
         // Получаем токен из заголовка
-        var authHeader = request.getHeader(HEADER_NAME);
+        final var authHeader = request.getHeader(HEADER_NAME);
         if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // Обрезаем префикс и получаем имя пользователя из токена
-        var jwt = authHeader.substring(BEARER_PREFIX.length());
-        var username = jwtService.extractUserName(jwt);
-
+        final var jwt = authHeader.substring(BEARER_PREFIX.length());
+        final var username = jwtService.extractUserName(jwt);
         if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            var userDetails = userService
+            final var userDetails = userService
                     .userDetailsService()
                     .loadUserByUsername(username);
 
             // Если токен валиден, то аутентифицируем пользователя
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                var context = SecurityContextHolder.createEmptyContext();
+                final var context = SecurityContextHolder.createEmptyContext();
 
-                var authToken = new UsernamePasswordAuthenticationToken(
+                final var authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()
