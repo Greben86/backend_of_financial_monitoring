@@ -15,7 +15,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: '4'
           memory: 1G
     healthcheck:
       test: ["CMD", "curl", "-f", "http://backendservice:8080/actuator/health"]
@@ -50,7 +50,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: '4'
           memory: 4G
     networks:
       - financial-network
