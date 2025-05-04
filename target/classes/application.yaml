@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: backend_of_financial_monitoring
+  datasource:
+    url: "${DB_URL:jdbc:postgresql://localhost:5432/hakaton_db}"
+    username: "${DB_USERNAME:admin}"
+    password: "${DB_PASSWORD:admin}"
+    driverClassName: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+security:
+  token:
+    signing:
+      key: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
+    expiration:
+      milliseconds: 144000000
+
