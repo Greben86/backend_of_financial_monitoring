@@ -1,0 +1,396 @@
+{
+  "info": {
+    "name": "Financial Monitoring API",
+    "_postman_id": "12345678-1234-5678-1234-567812345678",
+    "description": "Коллекция запросов ко всем основным эндпоинтам API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Регистрация",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/auth/sign/up",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "sign",
+            "up"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"vasya\", \"password\": \"My_passw0rd1\"}"
+        }
+      }
+    },
+    {
+      "name": "Авторизация",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/auth/sign/in",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "sign",
+            "in"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"vasya\", \"password\": \"My_passw0rd1\"}"
+        }
+      }
+    },
+    {
+      "name": "Добавление транзакции",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/transaction/add",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "transaction",
+            "add"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"customerType\": \"Физическое лицо\", \"transactionTime\": \"01-05-2025 14:00:00\", \"transactionType\": \"Поступление\", \"description\": \"Подарок\", \"sumValue\": 1000.0, \"senderBank\": \"Райффайзен\", \"account\": \"40817810000000000001\", \"recipientBank\": \"Альфа\", \"inn\": \"1234567890\", \"recipientAccount\": \"40702810000000000002\", \"categoryId\": 1, \"phone\": \"+79161234567\"}"
+        }
+      }
+    },
+    {
+      "name": "Смена пароля",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/auth/password/change",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "password",
+            "change"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"password\": \"My_NEW_passw0rd1\"}"
+        }
+      }
+    },
+    {
+      "name": "Изменение имени",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/user/edit",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "user",
+            "edit"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"Petya\"}"
+        }
+      }
+    },
+    {
+      "name": "Добавление категории",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/category/add",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "category",
+            "add"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Продукты\"}"
+        }
+      }
+    },
+    {
+      "name": "Редактирование категории",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/category/1/edit",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "category",
+            "1",
+            "edit"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Продукты и еда\"}"
+        }
+      }
+    },
+    {
+      "name": "Получение всех категорий",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/category/all",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "category",
+            "all"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Редактирование транзакции",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/transaction/100/edit",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "transaction",
+            "100",
+            "edit"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"customerType\": \"Физическое лицо\", \"transactionTime\": \"01-05-2025 14:00:00\", \"transactionType\": \"Поступление\", \"description\": \"Подарок на день рождения\", \"sumValue\": 1200.0, \"senderBank\": \"Райффайзен\", \"account\": \"40817810000000000001\", \"recipientBank\": \"Альфа\", \"inn\": \"1234567890\", \"recipientAccount\": \"40702810000000000002\", \"categoryId\": 1, \"phone\": \"+79161234567\"}"
+        }
+      }
+    },
+    {
+      "name": "Изменение статуса транзакции",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/transaction/100/status",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "transaction",
+            "100",
+            "status"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"Платеж выполнен\"}"
+        }
+      }
+    },
+    {
+      "name": "Фильтрация транзакций",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/transaction/search?properties={}",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "transaction",
+            "search?properties={}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Экспорт транзакций",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/transaction/export?properties={}",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "transaction",
+            "export?properties={}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Удаление транзакции",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/transaction/100/delete",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "transaction",
+            "100",
+            "delete"
+          ]
+        }
+      }
+    }
+  ]
+}
