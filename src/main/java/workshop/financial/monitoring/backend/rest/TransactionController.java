@@ -2,6 +2,7 @@ package workshop.financial.monitoring.backend.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,14 @@ import workshop.financial.monitoring.backend.domain.dto.FilterDTO;
 import workshop.financial.monitoring.backend.domain.dto.TransactionRequest;
 import workshop.financial.monitoring.backend.domain.dto.TransactionResponse;
 import workshop.financial.monitoring.backend.domain.dto.TransactionStatusRequest;
-import workshop.financial.monitoring.backend.service.export.ExportExcelService;
+import workshop.financial.monitoring.backend.exception.LogicException;
 import workshop.financial.monitoring.backend.service.TransactionService;
+import workshop.financial.monitoring.backend.service.export.ExportService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,7 +43,15 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final ExportExcelService exportExcelService;
+    private final List<ExportService<TransactionResponse>> exportBeans;
+
+    private Map<String, ExportService<TransactionResponse>> exportMap;
+
+    @PostConstruct
+    public void initController() {
+        exportMap = exportBeans.stream()
+                .collect(Collectors.toMap(ExportService::getExtension, Function.identity()));
+    }
 
     @Operation(summary = "Добавление транзакции")
     @ResponseStatus(HttpStatus.CREATED)
@@ -89,9 +102,25 @@ public class TransactionController {
 
     @Operation(summary = "Экспорт транзакций пользователя в Excel")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/export")
+    @GetMapping({"/export", "/export/xlsx"})
     @CrossOrigin
-    public void export(@ModelAttribute FilterDTO properties, HttpServletResponse response) {
-        exportExcelService.export(transactionService.searchTransactions(properties), response);
+    public void exportExcel(@ModelAttribute FilterDTO properties, HttpServletResponse response) {
+        if (exportMap == null || !exportMap.containsKey("xlsx")) {
+            throw new LogicException("Не обнаружен бин экспорта для Excel");
+        }
+        final var exportBean = exportMap.get("xlsx");
+        exportBean.export(transactionService.searchTransactions(properties), response);
+    }
+
+    @Operation(summary = "Экспорт транзакций пользователя в Csv")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/export/csv")
+    @CrossOrigin
+    public void exportCsv(@ModelAttribute FilterDTO properties, HttpServletResponse response) {
+        if (exportMap == null || !exportMap.containsKey("csv")) {
+            throw new LogicException("Не обнаружен бин экспорта для Csv");
+        }
+        final var exportBean = exportMap.get("csv");
+        exportBean.export(transactionService.searchTransactions(properties), response);
     }
 }
