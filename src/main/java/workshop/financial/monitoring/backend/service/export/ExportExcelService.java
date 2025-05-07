@@ -1,6 +1,5 @@
 package workshop.financial.monitoring.backend.service.export;
 
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,7 @@ import workshop.financial.monitoring.backend.exception.LogicException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,21 +21,19 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-@Service
-public class ExportExcelService {
+@Service("exportExcelService")
+public class ExportExcelService implements ExportService<TransactionResponse>  {
 
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
     private final DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 
     /**
-     * Метод формирует документ excel и записывает его в {@link ServletOutputStream}
-     *
-     * @param transactions список транзакций
-     * @param response объект {@link HttpServletResponse} из контроллера
+     * {@inheritDoc}
      */
-    public void export(final List<TransactionResponse> transactions, final HttpServletResponse response) {
+    public void export(final List<TransactionResponse> items, final HttpServletResponse response) {
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment; filename=export.xlsx");
+        final var currentDateTime = formatter.format(new Date());
+        response.setHeader("Content-Disposition", "attachment; filename=export_" + currentDateTime + "." + getExtension());
 
         // Create a new workbook and sheet
         try (final var outputStream = response.getOutputStream();
@@ -60,7 +58,7 @@ public class ExportExcelService {
 
             // Populate data rows
             int rowNum = 1;
-            for (final var transaction : transactions) {
+            for (final var transaction : items) {
                 final var row = sheet.createRow(rowNum++);
                 row.createCell(0).setCellValue(transaction.customerType().getName());
                 row.createCell(1).setCellValue(formatter.format(transaction.transactionTime()));
@@ -83,5 +81,13 @@ public class ExportExcelService {
             log.error("Ошибка экспорта в Excel", e);
             throw new LogicException("Ошибка экспорта в Excel: " + e.getMessage());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getExtension() {
+        return "xlsx";
     }
 }
