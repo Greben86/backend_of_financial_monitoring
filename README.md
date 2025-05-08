@@ -18,6 +18,8 @@
 * swagger http://localhost:8080/swagger-ui/index.html#/ для просмотра описания API
 * actuator http://localhost:8080/actuator для просмотра статуса приложения
 * pgadmin http://localhost:5050/browser/ база данных `hakaton_db` логин `admin` пароль `admin`
+* prometheus http://localhost:9090/ хранилище для метрик prometheus
+* grafana http://localhost:3000/ grafana с настроенными дашбордами
 
 ### Диаграмма базы данных
 

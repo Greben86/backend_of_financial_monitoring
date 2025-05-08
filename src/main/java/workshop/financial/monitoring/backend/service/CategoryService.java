@@ -1,5 +1,8 @@
 package workshop.financial.monitoring.backend.service;
 
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +22,16 @@ import java.util.List;
 @Transactional
 public class CategoryService {
 
+    private final MeterRegistry registry;
     private final CategoryRepository repository;
     private final UserService userService;
+
+    @PostConstruct
+    public void initMetric() {
+        Gauge.builder("categories.all", repository::count)
+                .description("Количество всех категорий")
+                .register(registry);
+    }
 
     /**
      * Добавление категории

@@ -83,6 +83,54 @@ services:
     depends_on:
       - postgres
 
+  prometheus:
+    image: prom/prometheus:latest
+    user: root
+    volumes:
+      - './config/prometheus/:/etc/prometheus/'
+    container_name: prometheus
+    hostname: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-admin-api'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+    networks:
+      - financial-network
+    depends_on:
+      - backendservice
+
+  grafana:
+    image: grafana/grafana:latest
+    user: root
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./config/grafana/datasources/prometheus_ds.yml:/etc/grafana/provisioning/datasources/prometheus_ds.yml"
+      - "./config/grafana/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml"
+      - "./config/grafana/prometheus:/var/lib/grafana/dashboards/prometheus"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --tries=1 -O- http://grafana:3000/api/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - financial-network
+    depends_on:
+      - backendservice
+      - prometheus
+
 volumes:
   hakaton_db-data:
   pgadmin-data:

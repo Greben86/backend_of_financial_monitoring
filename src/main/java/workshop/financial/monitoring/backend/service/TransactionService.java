@@ -1,5 +1,8 @@
 package workshop.financial.monitoring.backend.service;
 
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +28,24 @@ import java.util.Objects;
 @Transactional
 public class TransactionService {
 
+    private final MeterRegistry registry;
     private final TransactionRepository repository;
     private final CategoryService categoryService;
     private final UserService userService;
     private final SpecificationBuilder specificationBuilder;
+
+    @PostConstruct
+    public void initMetric() {
+        Gauge.builder("transactions.all", repository::count)
+                .description("Количество всех транзакций")
+                .register(registry);
+        for (final var status : Status.values()) {
+            Gauge.builder("transactions." + status.name(),
+                            () -> repository.countByStatus(status))
+                    .description("Количество транзакций со статусом \"" + status.getName() + "\"")
+                    .register(registry);
+        }
+    }
 
     /**
      * Добавление транзакции
