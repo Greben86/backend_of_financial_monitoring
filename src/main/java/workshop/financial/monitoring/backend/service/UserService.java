@@ -1,5 +1,8 @@
 package workshop.financial.monitoring.backend.service;
 
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,7 +21,15 @@ import workshop.financial.monitoring.backend.repository.UserRepository;
 @Transactional
 public class UserService {
 
+    private final MeterRegistry registry;
     private final UserRepository repository;
+
+    @PostConstruct
+    public void initMetric() {
+        Gauge.builder("users.all", repository::count)
+                .description("Количество всех пользователей")
+                .register(registry);
+    }
 
     /**
      * Создание пользователя
