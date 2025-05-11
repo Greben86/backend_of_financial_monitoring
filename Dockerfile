@@ -1,6 +1,7 @@
 # Родительский образ контейнера с maven внутри
 FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
-COPY . /app
+COPY ./src /app/src
+COPY pom.xml /app/pom.xml
 WORKDIR /app
 RUN mvn clean package -DskipTests=true --file pom.xml
 
