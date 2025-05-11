@@ -28,6 +28,19 @@ services:
     depends_on:
       - postgres
 
+  uiservice:
+    container_name: ui-financial-monitoring
+    build:
+      context: ui
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
+    networks:
+      - financial-network
+    depends_on:
+      - postgres
+
   postgres:
     image: postgres:17.0-alpine3.20
     environment:
